@@ -1,18 +1,10 @@
-export class Locator {
+export class Locator {   
 
-    constructor(){
-        console.log("Locator constructor");
-    }
-
-    current(success, error, option){
-        console.log( navigator.geolocation);
-        
-      
+    current(success, error, option){    
         return navigator.geolocation.getCurrentPosition(this.successCallback.bind(success), error, option);
     }
 
-    watch(success, error, option){
-        console.log( navigator.geolocation);
+    watch(success, error, option){        
         return navigator.geolocation.watchPosition(this.successCallback.bind(success), error, option);
     }
 
@@ -27,6 +19,4 @@ export class Locator {
         };
         this(this.position);         
     }
-
-
 }

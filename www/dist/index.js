@@ -12,7 +12,9 @@ var _Locator = require('./../device/Locator.device');
 
 var _SnackBar = require('./SnackBar.component');
 
-var _MapStyle = require('../models/MapStyle.model');
+var _RunnerWay = require('./RunnerWay.component');
+
+var _MapStyle = require('./../models/MapStyle.model');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -20,18 +22,15 @@ var RunnerMap = exports.RunnerMap = function () {
     function RunnerMap() {
         _classCallCheck(this, RunnerMap);
 
-        console.log("RunnerMap constructor");
         this.locator = new _Locator.Locator();
-        this.directionsDisplay = new google.maps.DirectionsRenderer();
         this.snackBar = new _SnackBar.SnackBar();
         this.mapStyle = new _MapStyle.MapStyle();
+        this.runnerWay = new _RunnerWay.RunnerWay();
     }
 
     _createClass(RunnerMap, [{
         key: 'onInit',
         value: function onInit() {
-            console.log("RunnerMap onInit");
-            document.getElementById("clear").addEventListener('click', this.clear.bind(this));
             this.locator.watch(this.success.bind(this), this.error.bind(this));
         }
     }, {
@@ -41,45 +40,14 @@ var RunnerMap = exports.RunnerMap = function () {
         key: 'onPause',
         value: function onPause() {}
     }, {
-        key: 'trace',
-        value: function trace(event) {
-            console.log(this);
-
-            this.directionsDisplay.setMap(this.map);
-
-            var directionsService = new google.maps.DirectionsService();
-            var selectedMode = google.maps.TravelMode["WALKING"];
-
-            var request = {
-                origin: this.marker.position,
-                destination: event.latLng,
-                travelMode: selectedMode
-            };
-
-            directionsService.route(request, function (response, status) {
-                if ("OK" === status) {
-                    this.directionsDisplay.setDirections(response);
-                    document.getElementById("clear").style.display = "block";
-                    return;
-                }
-                this.snackBar.display("Erreur de tracé : le serveur ne répond pas", function (event) {});
-            }.bind(this));
-        }
-    }, {
-        key: 'clear',
-        value: function clear() {
-            this.directionsDisplay.setMap(null);
-            document.getElementById("clear").style.display = "none";
-        }
-    }, {
         key: 'onLongClick',
         value: function onLongClick() {
+            var _this = this;
 
             var id;
             google.maps.event.addListener(this.map, 'mousedown', function (event) {
-
-                id = setTimeout(this.trace.bind(this, event), 500);
-            }.bind(this));
+                id = setTimeout(_this.runnerWay.trace.bind(_this.runnerWay, event, _this), 500);
+            });
 
             google.maps.event.addListener(this.map, 'mouseup', function (event) {
                 clearTimeout(id);
@@ -98,6 +66,7 @@ var RunnerMap = exports.RunnerMap = function () {
                 styles: this.mapStyle.getRetroModel()
 
             });
+            this.runnerWay.onInit();
         }
     }, {
         key: 'createMarker',
@@ -132,6 +101,7 @@ var RunnerMap = exports.RunnerMap = function () {
     }, {
         key: 'geocodePosition',
         value: function geocodePosition(geocoder, map, infowindow, position) {
+            var _this2 = this;
 
             geocoder.geocode({
                 'location': position
@@ -139,7 +109,7 @@ var RunnerMap = exports.RunnerMap = function () {
                 if (status === 'OK') {
                     if (results[0]) {
                         infowindow.setContent(results[0].formatted_address);
-                        infowindow.open(map, this.marker);
+                        infowindow.open(map, _this2.marker);
                     } else {
                         window.alert('No results found');
                     }
@@ -153,7 +123,7 @@ var RunnerMap = exports.RunnerMap = function () {
     return RunnerMap;
 }();
 
-},{"../models/MapStyle.model":6,"./../device/Locator.device":4,"./SnackBar.component":3}],2:[function(require,module,exports){
+},{"./../device/Locator.device":5,"./../models/MapStyle.model":7,"./RunnerWay.component":3,"./SnackBar.component":4}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -190,6 +160,75 @@ var RunnerTracking = exports.RunnerTracking = function () {
 }();
 
 },{"./RunnerMap.component":1}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var RunnerWay = exports.RunnerWay = function () {
+    function RunnerWay() {
+        _classCallCheck(this, RunnerWay);
+
+        this.directionsDisplay = new google.maps.DirectionsRenderer();
+    }
+
+    _createClass(RunnerWay, [{
+        key: "onInit",
+        value: function onInit() {
+            var _this = this;
+
+            document.getElementById("clear").addEventListener('click', function (e) {
+                return _this.clear();
+            });
+        }
+    }, {
+        key: "onPlay",
+        value: function onPlay() {}
+    }, {
+        key: "onPause",
+        value: function onPause() {}
+    }, {
+        key: "trace",
+        value: function trace(event, runnerMap) {
+            var _this2 = this;
+
+            this.directionsDisplay.setMap(runnerMap.map);
+
+            var directionsService = new google.maps.DirectionsService();
+            var selectedMode = google.maps.TravelMode["WALKING"];
+
+            var request = {
+                origin: runnerMap.marker.position,
+                destination: event.latLng,
+                travelMode: selectedMode
+            };
+
+            directionsService.route(request, function (response, status) {
+                if ("OK" === status) {
+                    _this2.directionsDisplay.setDirections(response);
+                    document.getElementById("clear").style.display = "block";
+                    return;
+                }
+                runnerMap.snackBar.display("Erreur de tracé : le serveur ne répond pas", function (event) {});
+            });
+        }
+    }, {
+        key: "clear",
+        value: function clear() {
+            this.directionsDisplay.setMap(null);
+            document.getElementById("clear").style.display = "none";
+        }
+    }]);
+
+    return RunnerWay;
+}();
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -203,8 +242,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var SnackBar = exports.SnackBar = function () {
     function SnackBar() {
         _classCallCheck(this, SnackBar);
-
-        console.log("SnackBar constructor");
     }
 
     _createClass(SnackBar, [{
@@ -224,7 +261,7 @@ var SnackBar = exports.SnackBar = function () {
     return SnackBar;
 }();
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -238,21 +275,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Locator = exports.Locator = function () {
     function Locator() {
         _classCallCheck(this, Locator);
-
-        console.log("Locator constructor");
     }
 
     _createClass(Locator, [{
         key: "current",
         value: function current(success, error, option) {
-            console.log(navigator.geolocation);
-
             return navigator.geolocation.getCurrentPosition(this.successCallback.bind(success), error, option);
         }
     }, {
         key: "watch",
         value: function watch(success, error, option) {
-            console.log(navigator.geolocation);
             return navigator.geolocation.watchPosition(this.successCallback.bind(success), error, option);
         }
     }, {
@@ -274,7 +306,7 @@ var Locator = exports.Locator = function () {
     return Locator;
 }();
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var _RunnerTracking = require('./components/RunnerTracking.component');
@@ -282,7 +314,7 @@ var _RunnerTracking = require('./components/RunnerTracking.component');
 var app = new _RunnerTracking.RunnerTracking();
 app.initialize();
 
-},{"./components/RunnerTracking.component":2}],6:[function(require,module,exports){
+},{"./components/RunnerTracking.component":2}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -493,4 +525,4 @@ var MapStyle = exports.MapStyle = function () {
   return MapStyle;
 }();
 
-},{}]},{},[5]);
+},{}]},{},[6]);
