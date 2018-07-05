@@ -1,7 +1,7 @@
-import {Locator} from './../device/Locator.device';
-import {SnackBar} from './SnackBar.component';
-import {RunnerWay} from './RunnerWay.component';
-import {MapStyle} from './../models/MapStyle.model';
+import {Locator} from '../device/locator.device';
+import {SnackBar} from './snack-bar.component';
+import {RunnerWay} from './runner-way.component';
+import {MapStyle} from '../models/map-style.model';
 
 export class RunnerMap {
 

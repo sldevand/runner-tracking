@@ -1,4 +1,4 @@
-export class Locator {   
+export class Locator {
 
     current(success, error, option){    
         return navigator.geolocation.getCurrentPosition(this.successCallback.bind(success), error, option);
