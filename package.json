@@ -9,7 +9,7 @@
     "android": "npm run phonegap remote build android",
     "android-local": "node_modules/.bin/cordova run android --device",
     "cordova": "node_modules/.bin/cordova",
-    "babel": "./node_modules/.bin/browserify ./src/index.js -t [babelify --presets[env]] -o ./www/dist/index.js"
+    "babel": "./node_modules/.bin/browserify ./src/index.js -t [babelify] -o ./www/dist/index.js"
   },
   "author": "",
   "license": "ISC",
