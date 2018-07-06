@@ -8,13 +8,13 @@ exports.RunnerMap = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Locator = require('./../device/Locator.device');
+var _locator = require('../device/locator.device');
 
-var _SnackBar = require('./SnackBar.component');
+var _snackBar = require('./snack-bar.component');
 
-var _RunnerWay = require('./RunnerWay.component');
+var _runnerWay = require('./runner-way.component');
 
-var _MapStyle = require('./../models/MapStyle.model');
+var _mapStyle = require('../models/map-style.model');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -22,10 +22,11 @@ var RunnerMap = exports.RunnerMap = function () {
     function RunnerMap() {
         _classCallCheck(this, RunnerMap);
 
-        this.locator = new _Locator.Locator();
-        this.snackBar = new _SnackBar.SnackBar();
-        this.mapStyle = new _MapStyle.MapStyle();
-        this.runnerWay = new _RunnerWay.RunnerWay();
+        this.locator = new _locator.Locator();
+        this.snackBar = new _snackBar.SnackBar();
+        this.mapStyle = new _mapStyle.MapStyle();
+        this.runnerWay = new _runnerWay.RunnerWay();
+        this.map;
     }
 
     _createClass(RunnerMap, [{
@@ -80,6 +81,7 @@ var RunnerMap = exports.RunnerMap = function () {
     }, {
         key: 'success',
         value: function success(position) {
+
             if (!this.map) {
                 this.createMap(position);
                 this.createMarker(position);
@@ -103,6 +105,8 @@ var RunnerMap = exports.RunnerMap = function () {
         value: function geocodePosition(geocoder, map, infowindow, position) {
             var _this2 = this;
 
+            console.log(this);
+
             geocoder.geocode({
                 'location': position
             }, function (results, status) {
@@ -123,7 +127,7 @@ var RunnerMap = exports.RunnerMap = function () {
     return RunnerMap;
 }();
 
-},{"./../device/Locator.device":5,"./../models/MapStyle.model":7,"./RunnerWay.component":3,"./SnackBar.component":4}],2:[function(require,module,exports){
+},{"../device/locator.device":5,"../models/map-style.model":7,"./runner-way.component":3,"./snack-bar.component":4}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -133,7 +137,7 @@ exports.RunnerTracking = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RunnerMap = require('./RunnerMap.component');
+var _runnerMap = require('./runner-map.component');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -141,7 +145,7 @@ var RunnerTracking = exports.RunnerTracking = function () {
     function RunnerTracking() {
         _classCallCheck(this, RunnerTracking);
 
-        this.runnerMap = new _RunnerMap.RunnerMap();
+        this.runnerMap = new _runnerMap.RunnerMap();
     }
 
     _createClass(RunnerTracking, [{
@@ -152,14 +156,18 @@ var RunnerTracking = exports.RunnerTracking = function () {
     }, {
         key: 'initialize',
         value: function initialize() {
-            window.cordova ? document.addEventListener('deviceready', this.run) : this.run();
+            var _this = this;
+
+            window.cordova ? document.addEventListener('deviceready', function (e) {
+                _this.run();
+            }) : this.run();
         }
     }]);
 
     return RunnerTracking;
 }();
 
-},{"./RunnerMap.component":1}],3:[function(require,module,exports){
+},{"./runner-map.component":1}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -309,12 +317,12 @@ var Locator = exports.Locator = function () {
 },{}],6:[function(require,module,exports){
 'use strict';
 
-var _RunnerTracking = require('./components/RunnerTracking.component');
+var _runnerTracking = require('./components/runner-tracking.component');
 
-var app = new _RunnerTracking.RunnerTracking();
+var app = new _runnerTracking.RunnerTracking();
 app.initialize();
 
-},{"./components/RunnerTracking.component":2}],7:[function(require,module,exports){
+},{"./components/runner-tracking.component":2}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

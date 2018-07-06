@@ -1,4 +1,4 @@
-import {RunnerMap} from './RunnerMap.component';
+import {RunnerMap} from './runner-map.component';
 
 export class RunnerTracking{
 
@@ -12,6 +12,8 @@ export class RunnerTracking{
 
     initialize(){
         window.cordova ?
-        document.addEventListener('deviceready', this.run) : this.run()
+        document.addEventListener('deviceready', (e) => {
+            this.run();
+        }) : this.run();
     }
 }

@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "phonegap": "node_modules/.bin/phonegap",
-    "serve": "npm run phonegap serve",
-    "android": "npm run phonegap remote build android",
-    "android-local": "node_modules/.bin/cordova run android --device",
+    "serve": "phonegap serve",
+    "android": "phonegap remote build android",
+    "android-local": "cordova run android --device",
     "cordova": "node_modules/.bin/cordova",
     "babel": "./node_modules/.bin/browserify ./src/index.js -t [babelify] -o ./www/dist/index.js"
   },

@@ -10,6 +10,7 @@ export class RunnerMap {
         this.snackBar = new SnackBar;
         this.mapStyle = new MapStyle;
         this.runnerWay = new RunnerWay;
+        this.map;
     }
 
     onInit() {
@@ -23,7 +24,6 @@ export class RunnerMap {
     onPause() {
 
     }
-
     onLongClick() {
         var id;
         google.maps.event.addListener(this.map, 'mousedown', (event) => {
@@ -58,18 +58,20 @@ export class RunnerMap {
     }
 
     success(position) {
+ 
         if (!this.map) {
             this.createMap(position);
             this.createMarker(position);
-            this.onLongClick();
+            this.onLongClick();       
             var geocoder = new google.maps.Geocoder;
-            var infowindow = new google.maps.InfoWindow;
+            var infowindow = new google.maps.InfoWindow;   
             this.geocodePosition(geocoder, this.map, infowindow, position);
             return;
         }
 
         this.map.panTo(position);
         this.marker.setPosition(position);
+       
     }
 
     error() {
@@ -77,6 +79,8 @@ export class RunnerMap {
     }
 
     geocodePosition(geocoder, map, infowindow, position) {
+        console.log(this);
+        
         geocoder.geocode({
             'location': position
         }, (results, status) => {
